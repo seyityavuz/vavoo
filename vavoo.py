@@ -2,7 +2,6 @@ import requests
 import re
 
 URL = "https://vavoo.to/channels"
-PROXY_BASE = "https://kerimmkirac-vavoo.hf.space/proxy/m3u?url=https://vavoo.to/play/{}/index.m3u8"
 LOGO_URL = "https://raw.githubusercontent.com/kerimmkirac/CanliTvListe/refs/heads/main/vavoo.png"
 OUTPUT_FILE = "vavoo.m3u"
 
@@ -68,7 +67,6 @@ def fetch_turkey_channels():
     return sorted(turkey_channels, key=sort_key)
 
 def generate_m3u(channels):
-    
     spor_channels = [ch for ch in channels if "spor" in ch.get("name", "").lower()]
     genel_channels = [ch for ch in channels if "spor" not in ch.get("name", "").lower()]
 
@@ -80,9 +78,8 @@ def generate_m3u(channels):
         for ch in channels:
             name = ch.get("name", "Unknown").strip()
             tvg_id = normalize_tvg_id(name)
-            proxy_url = PROXY_BASE.format(ch.get("id"))
+            stream_url = f"https://vavoo.to/play/{ch.get('id')}/index.m3u8"
 
-            
             if "spor" in name.lower():
                 group_title = f"Spor ({spor_count})"
             else:
@@ -91,7 +88,7 @@ def generate_m3u(channels):
             f.write(
                 f'#EXTINF:-1 tvg-name="{name}" tvg-language="Türkçe" '
                 f'tvg-country="Türkiye" tvg-id="{tvg_id}" tvg-logo="{LOGO_URL}" '
-                f'group-title="{group_title}",{name}\n{proxy_url}\n'
+                f'group-title="{group_title}",{name}\n{stream_url}\n'
             )
 
     print(f"{len(channels)} Tane kanal bulundu → '{OUTPUT_FILE}' dosyasına yazıldı.")
